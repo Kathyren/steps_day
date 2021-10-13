@@ -1,25 +1,54 @@
 ---
-title: "steps_per_day"
-author: "Karen"
-date: "10/13/2021"
+title: "Daily Step Counts"
+author: "Karen, Anastasiia, Linda, Asuman, Narod"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(LearnBayes)
+source('TeachBayes.r')
+library(tidyverse)
 ```
 
-## R Steps per day
+## Steps per day
 
-We colected a prior form 
+We collected a prior from 
+
+We are interested in $\theta$, the average steps per day. 
+
+Prior parameters $\mu_0,\sigma_0$ are calculated based on previous research studies which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA) [daily step counts](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/)
 
 ```{r}
-prior_data_set = c(3800,4000,3000,4000,8000,11822, 8000,7500,9999,10000,12499)
+# define our prior data set that is collected from previous publications
+prior_data_set <- c(3800,4000,3000,4000,8000,11822, 8000,7500,9999,10000,12499)
+
+# plot a histogram
+hist(prior_data_set)
+
+# set mu_0 and sigma_0 based on prior data
 mu0 <- mean(prior_data_set)
-n <- length(prior_data_set)
 sd0 <- sd(prior_data_set)
 
+# sample size
+n <- length(prior_data_set)
 
+```
 
+## Data collection 
+
+We observed daily step counts of a small group of graduate students
+
+a. Store the $k=20$ properties as a vector of average daily step counts in an `R` object called `steps_per_day` 
+b. Calculate the mean of these rents and then compute the standard error using $\sigma$ and $n$
+c. Use the `dnorm` function to compute the likelihood of observing these data under different values of $\theta$, to see how the likelihood changes 
+
+```{r}
+steps_per_day <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000)
+
+k <- length(steps_per_day)
 ```
 
