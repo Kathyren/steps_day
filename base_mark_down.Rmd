@@ -14,9 +14,9 @@ source('TeachBayes.r')
 library(tidyverse)
 ```
 
-## Steps per day
+## Prior
 
-We're interested in estimating the average steps of a graduate student per day. 
+We're interested in estimating the average steps of a graduate student per day and how it differs between female and male students. 
 
 Prior parameters $\mu_0,\sigma_0$ are calculated based on previous [research studies](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/) which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA).
 
@@ -36,7 +36,6 @@ sd0 <- sd(prior_data_set)
 n <- length(prior_data_set)
 
 ```
-
 ## Data collection 
 
 We observed average daily step counts of a small group of graduate students
@@ -54,7 +53,6 @@ sigma <- 4780 # for known $\sigma$ of an ith student
 se <- sigma/sqrt(k)
 ```
 
-
 ## Posterior
 
 ```{r}
@@ -66,11 +64,28 @@ df <- data.frame(Distribution = c("Prior","Data","Posterior"),
                  Mean = c(mu0, xbar, post_mean), 
                  SD = c(sd0, se, post_sd))
 df
-
 ```
 
+Plot the prior, data and posterior
 
 ```{r}
+x <- seq(min(prior_data_set), max(prior_data_set), by=3000)
+
+priorx <- dnorm(x, mean=mu0, sd=sd0)
+datax  <- dnorm(x, mean=xbar, sd=se)
+postx  <- dnorm(x, mean=post_mean, sd=post_sd)
+
+plot(x, priorx, type='l', lwd=3, xlim=c(min(x), max(x)), ylim=c(0,0.0004), col='blue', 
+     main = '', xlab = 'theta', ylab = '')
+lines(x, datax, col='black', lwd=3)
+lines(x, postx, col='red', lwd=3)
+
+legend("topright", c("Prior","Data","Posterior"), lty = 1, lwd= 3, col = c('blue','black','red'))
+```
+**The posterior is overlapped with the data**
+
+```{r}
+
 
 ```
 
