@@ -174,11 +174,10 @@ pre code {
 
 <div id="steps-per-day" class="section level2">
 <h2>Steps per day</h2>
-<p>We collected a prior from</p>
-<p>We are interested in <span class="math inline">\(\theta\)</span>, the average steps per day.</p>
-<p>Prior parameters <span class="math inline">\(\mu_0,\sigma_0\)</span> are calculated based on previous research studies which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA) <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/">daily step counts</a></p>
+<p>We’re interested in estimating the average steps of a graduate student per day.</p>
+<p>Prior parameters <span class="math inline">\(\mu_0,\sigma_0\)</span> are calculated based on previous <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/">research studies</a> which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA).</p>
 <pre class="r"><code># define our prior data set that is collected from previous publications
-prior_data_set &lt;- c(3800,4000,3000,4000,8000,11822, 8000,7500,9999,10000,12499)
+prior_data_set &lt;- c(3800, 4000, 3000, 4000, 8000, 11822,8000, 7500, 9999, 10000, 12499)
 
 # plot a histogram
 hist(prior_data_set)</code></pre>
@@ -192,7 +191,7 @@ n &lt;- length(prior_data_set)</code></pre>
 </div>
 <div id="data-collection" class="section level2">
 <h2>Data collection</h2>
-<p>Observe a sample of daily step counts of small group of graduate students</p>
+<p>We observed daily step counts of a small group of graduate students</p>
 <ol style="list-style-type: lower-alpha">
 <li>Store the <span class="math inline">\(k=20\)</span> properties as a vector of average daily step counts in an <code>R</code> object called <code>steps_per_day</code></li>
 <li>Calculate the mean of these rents and then compute the standard error using <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(n\)</span></li>

@@ -16,20 +16,19 @@ library(tidyverse)
 
 ## Steps per day
 
-We collected a prior from 
+We're interested in estimating the average steps of a graduate student per day. 
 
-We are interested in $\theta$, the average steps per day. 
-
-Prior parameters $\mu_0,\sigma_0$ are calculated based on previous research studies which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA) [daily step counts](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/)
+Prior parameters $\mu_0,\sigma_0$ are calculated based on previous [research studies](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/) which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA).
 
 ```{r}
 # define our prior data set that is collected from previous publications
-prior_data_set <- c(3800,4000,3000,4000,8000,11822, 8000,7500,9999,10000,12499)
+prior_data_set <- c(3800, 4000, 3000, 4000, 8000, 11822,8000, 7500, 9999, 10000, 12499)
 
 # plot a histogram
 hist(prior_data_set)
 
 # set mu_0 and sigma_0 based on prior data
+# as we have the average daily step counts, we calculate standard deviation
 mu0 <- mean(prior_data_set)
 sd0 <- sd(prior_data_set)
 
@@ -40,15 +39,38 @@ n <- length(prior_data_set)
 
 ## Data collection 
 
-We observed daily step counts of a small group of graduate students
+We observed average daily step counts of a small group of graduate students
 
-a. Store the $k=20$ properties as a vector of average daily step counts in an `R` object called `steps_per_day` 
-b. Calculate the mean of these rents and then compute the standard error using $\sigma$ and $n$
-c. Use the `dnorm` function to compute the likelihood of observing these data under different values of $\theta$, to see how the likelihood changes 
+a. Store the $k=21$ properties as a vector of average daily step counts in an `R` object called `steps_per_day` 
+b. Calculate the mean of average steps per day and then compute the standard error using $\sigma$ and $k$
 
 ```{r}
-steps_per_day <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000)
+steps_per_day <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, NA)
 
 k <- length(steps_per_day)
+
+xbar <- mean(steps_per_day, na.rm = TRUE)
+sigma <- 4780 # for known $\sigma$ of an ith student 
+se <- sigma/sqrt(k)
+```
+
+
+## Posterior
+
+```{r}
+## Calculate shape parameters for beta posterior:
+post_mean <- normal_update(c(mu0,sd0), c(xbar,se))[1]
+post_sd <- normal_update(c(mu0,sd0), c(xbar,se))[2]
+
+df <- data.frame(Distribution = c("Prior","Data","Posterior"), 
+                 Mean = c(mu0, xbar, post_mean), 
+                 SD = c(sd0, se, post_sd))
+df
+
+```
+
+
+```{r}
+
 ```
 
