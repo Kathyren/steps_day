@@ -1,0 +1,25 @@
+---
+title: "steps_per_day"
+author: "Karen"
+date: "10/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Steps per day
+
+We colected a prior form 
+
+```{r}
+prior_data_set = c(3800,4000,3000,4000,8000,11822, 8000,7500,9999,10000,12499)
+mu0 <- mean(prior_data_set)
+n <- length(prior_data_set)
+sd0 <- sd(prior_data_set)
+
+
+
+```
+
