@@ -94,8 +94,8 @@ steps_model <- "model{
       }
 
       # Hyperpriors for a,b
-      a ~ dgamma(10000, 4500)
-      b ~ dgamma(7500, 3000)
+        a ~ dnorm(7, 1^(-2))
+        b ~ dnorm(0.001, 0.01^(-2))
   }"
 ```
 
@@ -115,7 +115,7 @@ steps_jags <- jags.model(textConnection(steps_model),
 steps_sim <- update(steps_jags, n.iter=10000)
 # SIMULATE the posterior    
 steps_sim <- coda.samples(model = steps_jags, 
-                         variable.names = c("theta","a","b"), 
+                         variable.names = c("theta", "a", "b"), 
                          n.iter=20000)
 ```
 
@@ -124,20 +124,20 @@ steps_sim <- coda.samples(model = steps_jags,
 
 ```{r}
 # plot the simulations
-plot(steps_sim[,c(1,2)])
-plot(steps_sim[,c(3,4,5,6)])
+plot(steps_sim)
 ```
 ```{r}
 # summary of quantiles
-round(summary(steps_sim)[2]$quantile)
+round(summary(steps_sim)[2]$quantile, 4)
 ```
-Student 1 has average daily step between 11026 to 11100, 95% chance, credible intervals
-Student 2 has average daily step between 7991 to 8055
+Student 1 has average daily step between 11087 to 11161, 95% chance, credible intervals
 
 To estimate the average daily step of graduate students, we need to calculate posterior mean
 
 ```{r}
+mle <- steps_df %>% group_by(students) %>% summarise(mle = mean(steps))
 
+kable(data.frame(round(mle,2), posterior = round(summary(steps_sim)[[1]][3:6])))
 
 ```
 
