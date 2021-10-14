@@ -15,6 +15,7 @@ library(tidyverse)
 ```
 
 ## Prior
+a
 
 We're interested in estimating the average steps of a graduate student per day and how it differs in weekdays and weekend.
 
