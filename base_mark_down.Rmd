@@ -18,7 +18,7 @@ library(tidyverse)
 
 We're interested in estimating the average steps of a graduate student per day and how it differs between female and male students. 
 
-Prior parameters $\mu_0,\sigma_0$ are calculated based on previous [research studies](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/) which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA).
+Prior parameters $\mu_0,\sigma_0$ are selected based on previous [research studies](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/) which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA).
 
 ```{r}
 # define our prior data set that is collected from previous publications
@@ -84,8 +84,14 @@ legend("topright", c("Prior","Data","Posterior"), lty = 1, lwd= 3, col = c('blue
 ```
 **The posterior is overlapped with the data**
 
+## Comparing two means
+
 ```{r}
+steps_df <- read.csv("steps_df.csv")
+head(steps_df)
+```
 
-
+```{r}
+steps_df %>% group_by(Gender) %>% summarise(group.means = mean(Steps))
 ```
 
