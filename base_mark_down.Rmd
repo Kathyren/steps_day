@@ -119,25 +119,52 @@ steps_sim <- coda.samples(model = steps_jags,
                          n.iter=20000)
 ```
 
-
 ## Plot the Posterior
 
 ```{r}
 # plot the simulations
 plot(steps_sim)
 ```
+
+
 ```{r}
 # summary of quantiles
 round(summary(steps_sim)[2]$quantile, 4)
 ```
 Student 1 has average daily step between 11087 to 11161, 95% chance, credible intervals
 
+
+## Distribution of the posterior mean
+
+```{r}
+post_mean_dist <- data.frame(steps_sim[[1]])
+post_mean_dist$mean <- post_mean_dist$a / post_mean_dist$b
+
+post_mean <- mean(post_mean_dist$mean)
+post_mean
+
+plot(post_mean_dist$mean)
+```
+
 To estimate the average daily step of graduate students, we need to calculate posterior mean
+Student 1's daily step counts are greater than posterior mean which is assumed as the population standard
+
+```{r}
+quantile(post_mean_dist$mean, probs = c(0.025,0.975))
+
+ggplot(post_mean_dist, aes(x=mean)) + geom_density() + 
+  geom_vline(color = 'red', lty = 'dashed', 
+             xintercept=quantile(post_mean_dist$mean, probs = c(0.025,0.975)))
+
+
+```
+
+
 
 ```{r}
 mle <- steps_df %>% group_by(students) %>% summarise(mle = mean(steps))
 
-kable(data.frame(round(mle,2), posterior = round(summary(steps_sim)[[1]][3:6])))
+kable(data.frame(round(mle,2), posterior = round(summary(steps_sim)[[1]][3:6], 2)))
 
 ```
 
