@@ -16,7 +16,7 @@ library(tidyverse)
 
 ## Prior
 
-We're interested in estimating the average steps of a graduate student per day and how it differs between female and male students. 
+We're interested in estimating the average steps of a graduate student per day and how it differs in weekdays and weekend.
 
 Prior parameters $\mu_0,\sigma_0$ are selected based on previous [research studies](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/) which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA).
 
@@ -25,7 +25,7 @@ Prior parameters $\mu_0,\sigma_0$ are selected based on previous [research studi
 prior_data_set <- c(3800, 4000, 3000, 4000, 8000, 11822,8000, 7500, 9999, 10000, 12499)
 
 # average daily step counts
-#steps_per_day <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, NA)
+cohort3_steps <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, NA)
 
 # plot a histogram
 hist(prior_data_set)
@@ -88,8 +88,6 @@ steps_model <- "model{
   }"
 
 ```
-
-
 
 ## Posterior
 
