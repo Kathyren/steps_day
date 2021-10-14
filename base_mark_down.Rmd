@@ -46,7 +46,7 @@ std <- 2800
 my_alpha <- m^2/std^2
 my_beta <- m/std^2
 
-x <- seq(min(daily_steps), max(daily_steps), length=100)
+x <- seq(min(daily_steps), max(daily_steps), length=25)
 priorx <- dgamma(x, shape=my_alpha, rate=my_beta)
 plot(x, priorx, type='l',lwd=3, xlim = c(min(x), max(x)), ylim=c(0,0.00015),col = 'blue', 
      main = '', xlab = 'Daily Step Counts', ylab = '')
