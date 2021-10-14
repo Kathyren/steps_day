@@ -33,17 +33,25 @@ hist(daily_steps,
      col="lightblue",
      xlim=c(min(daily_steps), 15500),
      las=1, 
-     breaks=10)
-
-# set mu_0 and sigma_0 based on prior data
-# as we have the average daily step counts, we calculate standard deviation
-#mu0 <- mean(prior_data_set)
-#sd0 <- sd(prior_data_set)
-
-# sample size
-#n <- length(prior_data_set)
+     breaks=15)
 
 ```
+
+Assume the daily step counts follow a Poisson Distribution, as We have a count data and a time frame which is day in our case. We specify the conjugate $Gamma(\alpha,\beta)$
+
+```{r}
+m <- 7500
+std <- 
+  
+my_alpha <- m^2/std^2
+my_beta <- m/std^2
+
+x <- seq(0, 15500, length=100)
+priorx <- dgamma(x, shape=my_alpha, rate=my_beta)
+plot(x, priorx, type='l',lwd=3,xlim = c(0,7), ylim=c(0,0.8),col = 'blue', 
+     main = '', xlab = 'theta', ylab = '')
+```
+
 ## Data collection 
 
 We observed daily step counts of a small group of graduate students, $n=4$ 
