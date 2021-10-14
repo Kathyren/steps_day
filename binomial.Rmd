@@ -1,0 +1,116 @@
+---
+title: "Daily Step Counts"
+author: "Karen, Anastasiia, Linda, Asuman, Narod"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(knitr)
+library(LearnBayes)
+source('TeachBayes.r')
+library(tidyverse)
+```
+
+## Prior
+
+We're interested in estimating the average steps of a graduate student per day and how it differs in weekdays and weekend.
+
+Prior parameters $\mu_0,\sigma_0$ are selected based on previous [research studies](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7093766/) which have been tracked via investigators from the National Cancer Institute (NCI) and the National Institute on Aging (NIA).
+
+```{r}
+# define our prior data set that is collected from previous publications
+# average daily step counts
+cohort3_steps <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, 3800, 4000, 3000, 4000, 8000, 11822,8000, 7500, 9999, 10000, 12499)
+
+# plot a histogram
+hist(cohort3_steps, 15)
+
+# set mu_0 and sigma_0 based on prior data
+# as we have the average daily step counts, we calculate standard deviation
+#mu0 <- mean(prior_data_set)
+#sd0 <- sd(prior_data_set)
+
+# sample size
+#n <- length(prior_data_set)
+
+```
+## Data collection 
+
+We observed average daily step counts of a small group of graduate students
+
+a. Store the $k=21$ properties as a vector of average daily step counts in an `R` object called `steps_per_day` 
+b. Calculate the mean of average steps per day and then compute the standard error using $\sigma$ and $k$
+
+```{r}
+# daily steps counts of 5G
+n1 <- c(11233,16683,19389,1009,8971,9582,5195,9932,16643,7610,7611,15745,7427,7365,6209,15984,17006,11668,11770,9566,14153,8250,14386,18546,19037,11512,9269,5964,8571,8123,10445)
+n2 <- c(8632,94,12626,6618,10140,3807,1518,8976,5401,6015,15265,9494,4276,3458,12667,1574,19215,3562,7118,18315,4098,7880,6832,21,10840,12038,13276,13604,9252,13,13473)
+n3 <- c(14088,13741,18879,9008,7240,6705,14145,9688,11677,14158,18181,11360,5366,7247,6478,5454,7108,13981,12393,14611,14162,17909,850,658,9519,10773,12942,12354,8212,2122,11823)
+n4 <- c(12516,16648,18535,8471,5276,7391,18322,9840,5612,9394,10399,6548,7753,7202,12155,20152,5172,13354,7634,8156,10069,7714,8273,13391,12087,13872,10794,5932,10264,14142,22486)
+
+steps <- c(n1, n2, n3, n4)
+students <- c(rep(1,length(n1)),
+              rep(2, length(n2)),
+              rep(3, length(n3)),
+              rep(4, length(n4)))
+steps_df <- data.frame(students, steps)
+head(steps_df,4)
+
+#plot the daily count steps
+ggplot(steps_df, aes(y=steps, group = students)) + 
+  geom_boxplot(aes(fill=as.factor(students))) +
+  labs(y = "Daily Step Counts" , fill = "Students") + 
+  theme_bw()
+```
+
+## Is 5G active or not?
+
+In literature, activity categories are give. Using this information, we wanted to understand if 5G is active or not. 
+````{r}
+#add activity column for 5G data
+steps_df <- steps_df %>% 
+  mutate(Activity = case_when(steps < 10000 ~ "Not Active",
+                              steps >=10000  ~ "Active")) 
+
+active_count <- steps_df %>% 
+  group_by(Activity) %>% 
+  tally()
+
+# for 59 days 5G was active, 65 was not active
+
+data_shapes <- c(59,65)
+beta_draw(data_shapes)
+
+# add activity column for prior
+cohort3_steps_df <- cohort3_steps %>% 
+  as.data.frame() %>% 
+  mutate(Activity = case_when(cohort3_steps < 10000 ~ "Not Active",
+                              cohort3_steps >=10000  ~ "Active")) %>% 
+  `colnames<-` (c("steps","Activity"))
+  
+active_count_prior <- cohort3_steps_df %>% 
+  group_by(Activity) %>% 
+  tally()
+# on average 13 days prior data was active, 18 days were not active
+prior_shapes <- c(13,18)
+beta_draw(prior_shapes)
+
+````
+````{r}
+## Calculate shape parameters for beta posterior:
+prior_par <- c(prior_shapes[1], prior_shapes[2])
+post_par <- prior_par + data_shapes
+post_par
+````
+````{r}
+beta_prior_post(prior_par, post_par)
+````
+````{r}
+beta_interval(0.95, post_par)
+````
+
+
+
