@@ -124,6 +124,6 @@ steps_sim <- coda.samples(model = steps_jags,
 
 ```{r}
 # plot the simulations
-plot(steps_sim)
+plot(steps_sim[[1]])
 ```
 
