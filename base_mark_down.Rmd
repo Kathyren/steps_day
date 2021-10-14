@@ -24,6 +24,9 @@ Prior parameters $\mu_0,\sigma_0$ are selected based on previous [research studi
 # define our prior data set that is collected from previous publications
 prior_data_set <- c(3800, 4000, 3000, 4000, 8000, 11822,8000, 7500, 9999, 10000, 12499)
 
+# average daily step counts
+#steps_per_day <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, NA)
+
 # plot a histogram
 hist(prior_data_set)
 
@@ -44,54 +47,89 @@ a. Store the $k=21$ properties as a vector of average daily step counts in an `R
 b. Calculate the mean of average steps per day and then compute the standard error using $\sigma$ and $k$
 
 ```{r}
-steps_per_day <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, NA)
+# daily steps counts
+n1 <- c(11233,16683,19389,1009,8971,9582,5195,9932,16643,7610,7611,15745,7427,7365,6209,15984,17006,11668,11770,9566,14153,8250,14386,18546,19037,11512,9269,5964,8571,8123,10445)
+n2 <- c(8632,94,12626,6618,10140,3807,1518,8976,5401,6015,15265,9494,4276,3458,12667,1574,19215,3562,7118,18315,4098,7880,6832,21,10840,12038,13276,13604,9252,13,13473)
+n3 <- c(14088,13741,18879,9008,7240,6705,14145,9688,11677,14158,18181,11360,5366,7247,6478,5454,7108,13981,12393,14611,14162,17909,850,658,9519,10773,12942,12354,8212,2122,11823)
+n4 <- c(12516,16648,18535,8471,5276,7391,18322,9840,5612,9394,10399,6548,7753,7202,12155,20152,5172,13354,7634,8156,10069,7714,8273,13391,12087,13872,10794,5932,10264,14142,22486)
 
-k <- length(steps_per_day)
+steps <- c(n1, n2, n3, n4)
+students <- c(rep(1,length(n1)),
+              rep(2, length(n2)),
+              rep(3, length(n3)),
+              rep(4, length(n4)))
+steps_df <- data.frame(students, steps)
+head(steps_df,4)
 
-xbar <- mean(steps_per_day, na.rm = TRUE)
-sigma <- 4780 # for known $\sigma$ of an ith student 
-se <- sigma/sqrt(k)
+#plot the daily count steps
+ggplot(steps_df, aes(y=steps, group = students)) + 
+  geom_boxplot(aes(fill=as.factor(students))) +
+  labs(y = "Daily Step Counts" , fill = "Students") + 
+  theme_bw()
 ```
+
+## Hierarchical model in rjags
+
+```{r}
+steps_model <- "model{
+      # Likelihood model for steps[i]
+      for(i in 1:length(steps)) {
+          steps[i] ~ dpois(theta[students[i]])
+      }
+
+      # Prior models for theta_s
+      for(students in 1:n.students) {
+      theta[students] ~ dgamma(a, b)
+      }
+
+      # Hyperpriors for a,b
+      a ~ dgamma(2, 0.2)
+      b ~ dgamma(1, 0.5)
+  }"
+
+```
+
+
 
 ## Posterior
 
 ```{r}
-## Calculate shape parameters for beta posterior:
-post_mean <- normal_update(c(mu0,sd0), c(xbar,se))[1]
-post_sd <- normal_update(c(mu0,sd0), c(xbar,se))[2]
-
-df <- data.frame(Distribution = c("Prior","Data","Posterior"), 
-                 Mean = c(mu0, xbar, post_mean), 
-                 SD = c(sd0, se, post_sd))
-df
+# ## Calculate shape parameters for beta posterior:
+# post_mean <- normal_update(c(mu0,sd0), c(xbar,se))[1]
+# post_sd <- normal_update(c(mu0,sd0), c(xbar,se))[2]
+# 
+# df <- data.frame(Distribution = c("Prior","Data","Posterior"), 
+#                  Mean = c(mu0, xbar, post_mean), 
+#                  SD = c(sd0, se, post_sd))
+# df
 ```
 
 Plot the prior, data and posterior
 
 ```{r}
-x <- seq(min(prior_data_set), max(prior_data_set), by=3000)
-
-priorx <- dnorm(x, mean=mu0, sd=sd0)
-datax  <- dnorm(x, mean=xbar, sd=se)
-postx  <- dnorm(x, mean=post_mean, sd=post_sd)
-
-plot(x, priorx, type='l', lwd=3, xlim=c(min(x), max(x)), ylim=c(0,0.0004), col='blue', 
-     main = '', xlab = 'theta', ylab = '')
-lines(x, datax, col='black', lwd=3)
-lines(x, postx, col='red', lwd=3)
-
-legend("topright", c("Prior","Data","Posterior"), lty = 1, lwd= 3, col = c('blue','black','red'))
+# x <- seq(min(prior_data_set), max(prior_data_set), by=3000)
+# 
+# priorx <- dnorm(x, mean=mu0, sd=sd0)
+# datax  <- dnorm(x, mean=xbar, sd=se)
+# postx  <- dnorm(x, mean=post_mean, sd=post_sd)
+# 
+# plot(x, priorx, type='l', lwd=3, xlim=c(min(x), max(x)), ylim=c(0,0.0004), col='blue', 
+#      main = '', xlab = 'theta', ylab = '')
+# lines(x, datax, col='black', lwd=3)
+# lines(x, postx, col='red', lwd=3)
+# 
+# legend("topright", c("Prior","Data","Posterior"), lty = 1, lwd= 3, col = c('blue','black','red'))
 ```
 **The posterior is overlapped with the data**
 
 ## Comparing two means
 
 ```{r}
-steps_df <- read.csv("steps_df.csv")
-head(steps_df)
+# steps_df <- read.csv("steps_df.csv")
+# head(steps_df)
 ```
 
 ```{r}
-steps_df %>% group_by(Gender) %>% summarise(group.means = mean(Steps))
+# steps_df %>% group_by(Gender) %>% summarise(group.means = mean(Steps))
 ```
 
