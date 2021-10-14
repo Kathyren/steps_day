@@ -1,5 +1,5 @@
 ---
-title: "Daily Step Counts"
+title: "Daily Step Counts - Hierarchical models for clustered data "
 author: "Karen, Anastasiia, Linda, Asuman, Narod"
 date: "`r Sys.Date()`"
 output: html_document
@@ -126,6 +126,37 @@ steps_sim <- coda.samples(model = steps_jags,
 plot(steps_sim)
 ```
 
+```{r}
+# Store the chains in a data frame
+steps_chains <- data.frame(sim = 1:20000, steps_sim[[1]])
+
+# Check out the head of rent_chains
+head(steps_chains)
+```
+
+```{r}
+# Distribution of the posterior mean
+steps_chains$mean <- steps_chains$a/steps_chains$b
+
+ggplot(steps_chains, aes(x=sim, y=mean)) + 
+  geom_point() +
+  geom_hline(yintercept = mean(steps_chains$mean), color = "blue", size = 1.2) +
+  annotate("text", x = 17000, y = 11000, label = "Posterior Mean = 10164.96", color = "white") +
+  labs(y = "Average Daily Step Counts" , x = "Iterations") + 
+  theme_bw()
+```
+
+```{r}
+quantile(steps_chains$mean, probs = c(0.025,0.975))
+
+ggplot(steps_chains, aes(x=mean)) + geom_density(size=1, color="darkblue") + 
+  geom_vline(color = 'red', lty = 'dashed', size = 1,
+             xintercept=quantile(steps_chains$mean, probs = c(0.025,0.975))) +
+  labs(x = "Average Daily Step Counts") + 
+  theme_bw()
+
+```
+
 
 ```{r}
 # summary of quantiles
@@ -133,38 +164,5 @@ round(summary(steps_sim)[2]$quantile, 4)
 ```
 Student 1 has average daily step between 11087 to 11161, 95% chance, credible intervals
 
-
-## Distribution of the posterior mean
-
-```{r}
-post_mean_dist <- data.frame(steps_sim[[1]])
-post_mean_dist$mean <- post_mean_dist$a / post_mean_dist$b
-
-post_mean <- mean(post_mean_dist$mean)
-post_mean
-
-plot(post_mean_dist$mean)
-```
-
-To estimate the average daily step of graduate students, we need to calculate posterior mean
 Student 1's daily step counts are greater than posterior mean which is assumed as the population standard
-
-```{r}
-quantile(post_mean_dist$mean, probs = c(0.025,0.975))
-
-ggplot(post_mean_dist, aes(x=mean)) + geom_density() + 
-  geom_vline(color = 'red', lty = 'dashed', 
-             xintercept=quantile(post_mean_dist$mean, probs = c(0.025,0.975)))
-
-
-```
-
-
-
-```{r}
-mle <- steps_df %>% group_by(students) %>% summarise(mle = mean(steps))
-
-kable(data.frame(round(mle,2), posterior = round(summary(steps_sim)[[1]][3:6], 2)))
-
-```
 
