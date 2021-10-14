@@ -84,8 +84,19 @@ steps_model <- "model{
       a ~ dgamma(2, 0.2)
       b ~ dgamma(1, 0.5)
   }"
+```
+
+## Compile the model
+
+```{r}
+steps_jags <- jags.model(textConnection(steps_model), 
+                        data = list(X = steps_df$steps, student = steps_df$students, 
+                                    n.student = 4),
+                        n.chains = 4) 
 
 ```
+
+
 
 ## Posterior
 
