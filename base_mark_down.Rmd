@@ -22,11 +22,18 @@ Prior parameters $\mu_0,\sigma_0$ are selected based on previous [research studi
 
 ```{r}
 # define our prior data set that is collected from previous publications
-# average daily step counts
-cohort3_steps <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, 3800, 4000, 3000, 4000, 8000, 11822,8000, 7500, 9999, 10000, 12499)
+# average daily step counts from cohort 3 graduate students
+daily_steps <- c(400, 1000, 1500, 6000, 7016, 7820, 8000, 8000, 8000, 8068, 10000, 10000, 10000, 10414, 10953, 11124, 12417, 14000, 14000, 14000, 15000, 3800, 4000, 3000, 4000, 8000, 11822,8000, 7500, 9999, 10000, 12499)
 
 # plot a histogram
-hist(cohort3_steps, 15)
+hist(daily_steps, 
+     main="Histogram for Average Daily Steps", 
+     xlab="Steps", 
+     border="darkblue", 
+     col="lightblue",
+     xlim=c(min(daily_steps), 15500),
+     las=1, 
+     breaks=10)
 
 # set mu_0 and sigma_0 based on prior data
 # as we have the average daily step counts, we calculate standard deviation
@@ -100,9 +107,9 @@ steps_jags <- jags.model(textConnection(steps_model),
 
 ```{r}
 # BURN IN the model
-steps_sim <- update(mail_jags, n.iter=10000)
+steps_sim <- update(steps_jags, n.iter=10000)
 # SIMULATE the posterior    
-steps_sim <- coda.samples(model = mail_jags, 
+steps_sim <- coda.samples(model = steps_jags, 
                          variable.names = c("theta","a","b"), 
                          n.iter=20000)
 ```
