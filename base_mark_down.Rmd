@@ -100,9 +100,9 @@ steps_jags <- jags.model(textConnection(steps_model),
 
 ```{r}
 # BURN IN the model
-mail_sim <- update(mail_jags, n.iter=10000)
+steps_sim <- update(mail_jags, n.iter=10000)
 # SIMULATE the posterior    
-mail_sim <- coda.samples(model = mail_jags, 
+steps_sim <- coda.samples(model = mail_jags, 
                          variable.names = c("theta","a","b"), 
                          n.iter=20000)
 ```
