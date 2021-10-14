@@ -33,7 +33,7 @@ hist(daily_steps,
      col="lightblue",
      xlim=c(min(daily_steps), 15500),
      las=1, 
-     breaks=15)
+     breaks=10)
 
 ```
 
@@ -41,15 +41,15 @@ Assume the daily step counts follow a Poisson Distribution, as We have a count d
 
 ```{r}
 m <- 7500
-std <- 
+std <- 2800
   
 my_alpha <- m^2/std^2
 my_beta <- m/std^2
 
-x <- seq(0, 15500, length=100)
+x <- seq(min(daily_steps), max(daily_steps), length=100)
 priorx <- dgamma(x, shape=my_alpha, rate=my_beta)
-plot(x, priorx, type='l',lwd=3,xlim = c(0,7), ylim=c(0,0.8),col = 'blue', 
-     main = '', xlab = 'theta', ylab = '')
+plot(x, priorx, type='l',lwd=3, xlim = c(min(x), max(x)), ylim=c(0,0.00015),col = 'blue', 
+     main = '', xlab = 'Daily Step Counts', ylab = '')
 ```
 
 ## Data collection 
@@ -89,12 +89,12 @@ steps_model <- "model{
 
       # Prior models for theta_s
       for(students in 1:n.students) {
-      theta[students] ~ dgamma(a, b)
+      theta[students] ~ dgamma(my_alpha, my_beta)
       }
 
       # Hyperpriors for a,b
-      a ~ dgamma(2, 0.2)
-      b ~ dgamma(1, 0.5)
+      my_alpha ~ dgamma(2, 0.2)
+      my_beta ~ dgamma(1, 0.5)
   }"
 ```
 
