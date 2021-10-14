@@ -46,10 +46,7 @@ hist(daily_steps,
 ```
 ## Data collection 
 
-We observed average daily step counts of a small group of graduate students
-
-a. Store the $k=21$ properties as a vector of average daily step counts in an `R` object called `steps_per_day` 
-b. Calculate the mean of average steps per day and then compute the standard error using $\sigma$ and $k$
+We observed daily step counts of a small group of graduate students, $n=4$ 
 
 ```{r}
 # daily steps counts of 5G
